@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNow } from '../hooks/useNow'
 import { getMyEvents, updateEvent, cancelEvent } from '../services/eventApi'
 import { hasStarted } from '../utils/eventTiming'
+import { getDateParts } from '../utils/formatEvent'
 import { validateEvent } from '../utils/validateEvent'
 import '../styles/CreateEvent.css'
 
@@ -14,10 +15,19 @@ function formatTime(time) {
   return String(time).slice(0, 5)
 }
 
+function startsAt(event) {
+  return `${formatDate(event.event_date)}T${formatTime(event.event_time)}`
+}
+
+// Shown as e.g. "Friday, November 20, 2026 at 7:00 p.m."
+function formatWhen(event) {
+  const date = new Date(startsAt(event))
+  return Number.isNaN(date.getTime()) ? 'Date to be announced' : getDateParts(date).full
+}
+
 // An event that has started can't be edited or cancelled any more.
 function isOver(event, now) {
-  const startsAt = `${formatDate(event.event_date)}T${formatTime(event.event_time)}`
-  return hasStarted({ startsAt }, now)
+  return hasStarted({ startsAt: startsAt(event) }, now)
 }
 
 function statusLabel(event, now) {
@@ -157,7 +167,6 @@ export default function MyEvents() {
     <div className="create-event-page">
       <div className="create-event-container">
         <header className="create-event-header">
-          <span className="create-event-eyebrow">WHOZIN EVENTS</span>
           <h1>My Events</h1>
           <p>View, edit, or cancel the events you've created.</p>
         </header>
@@ -181,11 +190,7 @@ export default function MyEvents() {
         )}
 
         {!loading && events.map((event) => (
-          <section
-            key={event.id}
-            className="create-event-form"
-            style={{ marginBottom: '24px' }}
-          >
+          <section key={event.id} className="create-event-form">
             <h2>{event.title}</h2>
 
             <p>
@@ -193,11 +198,7 @@ export default function MyEvents() {
             </p>
 
             <p>
-              <strong>Date:</strong> {formatDate(event.event_date)}
-            </p>
-
-            <p>
-              <strong>Time:</strong> {formatTime(event.event_time)}
+              <strong>When:</strong> {formatWhen(event)}
             </p>
 
             <p>

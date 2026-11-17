@@ -76,10 +76,9 @@ export default function CreateEvent() {
   }
 
   return (
-    <main className="create-event-page">
+    <div className="create-event-page">
       <div className="create-event-container">
         <header className="create-event-header">
-          <span className="create-event-eyebrow">WHOZIN EVENTS</span>
           <h1>Create an Event</h1>
           <p>
             Share your event with the Thunder Bay community.
@@ -192,7 +191,7 @@ export default function CreateEvent() {
               aria-invalid={Boolean(errors.image)}
             />
             <small>
-              Optional for this prototype. Use a publicly accessible image URL.
+              Optional. Paste a link to an image that anyone can open.
             </small>
             {errors.image && (
               <span className="field-error">{errors.image}</span>
@@ -262,6 +261,6 @@ export default function CreateEvent() {
           </div>
         </form>
       </div>
-    </main>
+    </div>
   );
 }
